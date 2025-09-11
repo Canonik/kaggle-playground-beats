@@ -62,12 +62,12 @@ preprocessing = ColumnTransformer([
 full_pipeline = Pipeline([
     ("full_preprocessing", preprocessing),
     ("model", HistGradientBoostingRegressor(
-    l2_regularization=15.655822469519572,
-    learning_rate=0.0056517517033373155,
-    max_bins=95,
-    max_iter=770,
-    max_leaf_nodes=19,
-    min_samples_leaf=10
+    l2_regularization=12.793096982736476,
+    learning_rate=0.05368123591849244,
+    max_bins=169,
+    max_iter=808,
+    max_leaf_nodes=5,
+    min_samples_leaf=14
     ))
 ])
 #26.4616955916462
@@ -82,7 +82,7 @@ def train_evaluate():
 
     predictions_df = pd.DataFrame(predictions, columns=["BeatsPerMinute"], index=clients_test.index)
 
-    predictions_df.to_csv("reports/hgbr_2.csv")
+    predictions_df.to_csv("reports/hgbr_3.csv")
 
 def kf_evaluate():
     kf = KFold(n_splits=5, shuffle=True, random_state=1234)

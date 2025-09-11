@@ -81,12 +81,11 @@ cv = KFold(n_splits=5, shuffle=True, random_state=1234)
 random_search = RandomizedSearchCV(
     estimator=full_pipeline,
     param_distributions=param_distributions,
-    n_iter=1500,                 
+    n_iter=600,                 
     cv=cv,
     scoring="neg_root_mean_squared_error",
     verbose=2,
-    random_state=42,
-    n_jobs=4                   
+    random_state=1234,              
 )
 
 random_search.fit(clients_attr, clients_labels)
@@ -94,7 +93,7 @@ print("best score (cv):", -random_search.best_score_)
 print("best params:", random_search.best_params_)
 
 best = pd.DataFrame(random_search.best_params_, columns= list(random_search.best_params_.keys()), index=list(random_search.best_params_))
-best.to_csv("reports/hist_best_params_1")
+best.to_csv("reports/hist_best_params_3")
 
 
 #best score (cv): 26.460037170278305
