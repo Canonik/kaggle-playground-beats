@@ -62,12 +62,12 @@ preprocessing = ColumnTransformer([
 full_pipeline = Pipeline([
     ("full_preprocessing", preprocessing),
     ("model", HistGradientBoostingRegressor(
-    l2_regularization=12.793096982736476,
-    learning_rate=0.05368123591849244,
-    max_bins=169,
-    max_iter=808,
-    max_leaf_nodes=5,
-    min_samples_leaf=14
+    l2_regularization=1.6228661601267957,
+    learning_rate=0.00379668445620915,
+    max_bins=167,
+    max_iter=1056,
+    max_leaf_nodes=22,
+    min_samples_leaf=19
     ))
 ])
 #26.4616955916462
@@ -76,13 +76,12 @@ def train_evaluate():
     print("FITTING MODEL")
     tree_model = full_pipeline.fit(clients_attr, clients_labels)
     print("MODEL FIT")
-    #joblib.dump(XGB_model, "models/XGB_2.pkl")
     
     predictions = tree_model.predict(clients_test)
 
     predictions_df = pd.DataFrame(predictions, columns=["BeatsPerMinute"], index=clients_test.index)
 
-    predictions_df.to_csv("reports/hgbr_3.csv")
+    predictions_df.to_csv("reports/hgbr_4.csv")
 
 def kf_evaluate():
     kf = KFold(n_splits=5, shuffle=True, random_state=1234)

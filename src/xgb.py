@@ -58,6 +58,8 @@ preprocessing = ColumnTransformer([
 full_pipeline = Pipeline([
     ("full_preprocessing", preprocessing),
     ("model", XGBRegressor(
+    objective="reg:tweedie",
+    tweedie_variance_power = 2,
     colsample_bytree=0.766854305569511,        
     gamma=0.28573363584388156,                 
     max_depth=5,                
@@ -84,7 +86,7 @@ def train_evaluate():
 
     predictions_df = pd.DataFrame(predictions, columns=["BeatsPerMinute"], index=clients_test.index)
 
-    predictions_df.to_csv("reports/XGB_6.csv")
+    predictions_df.to_csv("reports/XGB_7.csv")
 
 def kf_evaluate():
     kf = KFold(n_splits=5, shuffle=True, random_state=42)

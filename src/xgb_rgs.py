@@ -60,19 +60,22 @@ full_pipeline = Pipeline([
     eval_metric="rmse",
     random_state=1234,
     verbosity=2,
-    tree_method="auto",))          
+    tree_method="auto",
+    objective="reg:tweedie"
+    ))          
 ])
 
 param_distributions = {
-    "model__n_estimators": randint(150, 500),       
-    "model__learning_rate": uniform(0.00001, 0.001),      
-    "model__max_depth": randint(1, 19),              
+    "model__n_estimators": randint(150, 5000),       
+    "model__learning_rate": uniform(0.001, 0.1),      
+    "model__max_depth": randint(4, 19),              
     "model__min_child_weight": randint(1, 19),       
     "model__subsample": uniform(0.6, 0.4),          
     "model__colsample_bytree": uniform(0.6, 0.5),   
     "model__gamma": uniform(0, 0.5),                  
     "model__reg_alpha": uniform(0, 0.5),               
-    "model__reg_lambda": uniform(0, 2),              
+    "model__reg_lambda": uniform(0, 2),
+    "model__tweedie_variance_power": uniform(1, 0.5)              
 }
 
 
@@ -87,7 +90,6 @@ if __name__ == "__main__":
     cv=cv,
     verbose=2,
     random_state=42,
-    n_jobs=-1
 )
 
     random_search.fit(clients_attr, clients_labels)

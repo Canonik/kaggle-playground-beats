@@ -1,8 +1,6 @@
 import joblib
 import numpy as np
 import random
-np.random.seed(42)
-random.seed(42)
 import pandas as pd
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
@@ -17,8 +15,6 @@ from catboost import CatBoostRegressor
 from sklearn.feature_selection import SelectFromModel
 from scipy.stats import randint, uniform
 
-
-import datetime
 
 import sys
 from pathlib import Path
@@ -39,8 +35,9 @@ clients_labels = clients["BeatsPerMinute"]
 
 clients_test = standard_test_set()
 
+
 num_pipeline = make_pipeline(
-    PolynomialFeatures(degree=2, interaction_only=True, include_bias=False),
+    PolynomialFeatures(degree=2, interaction_only=False, include_bias=False),
     SimpleImputer(strategy="median"),
     StandardScaler())
 
@@ -62,33 +59,33 @@ preprocessing = ColumnTransformer([
 full_pipeline = Pipeline([
     ("full_preprocessing", preprocessing),
     ("model", LGBMRegressor(
-        colsample_bytree=0.7073899427560627,
-        learning_rate=0.003326399371381578,
-        max_bin=71,
-        min_child_samples=29,
-        n_estimators=865,
-        num_leaves=17,
-        reg_alpha=4.42036702053619,
-        reg_lambda=0.24294123442692134,
-        subsample=0.8460028906796679
+    colsample_bytree = 0.6739417822102108,
+    learning_rate = 0.005747923138822793,
+    max_bin = 97,
+    min_child_samples = 38,
+    n_estimators = 501,
+    num_leaves = 28,
+    reg_alpha = 5.363631975138525,
+    reg_lambda = 0.8163519220145885,
+    subsample = 0.8281775897621597,
+
+
     ))
 ])
-#26.4616955916462
 
 def train_evaluate():
     print("FITTING MODEL")
     tree_model = full_pipeline.fit(clients_attr, clients_labels)
     print("MODEL FIT")
-    #joblib.dump(XGB_model, "models/XGB_2.pkl")
     
     predictions = tree_model.predict(clients_test)
 
     predictions_df = pd.DataFrame(predictions, columns=["BeatsPerMinute"], index=clients_test.index)
 
-    predictions_df.to_csv("reports/gbm_4.csv")
+    predictions_df.to_csv("reports/gbm_7.csv")
 
 def kf_evaluate():
-    kf = KFold(n_splits=5, shuffle=True, random_state=1234)
+    kf = KFold(n_splits=5, shuffle=True, random_state=0)
     scores = cross_val_score(full_pipeline, clients_attr, clients_labels, cv=kf, scoring='neg_root_mean_squared_error')
     print(-scores.mean())
 
@@ -96,3 +93,5 @@ def kf_evaluate():
 
 if __name__ == "__main__":
     train_evaluate()
+
+#26.45858393256043

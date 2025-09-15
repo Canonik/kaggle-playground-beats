@@ -1,7 +1,5 @@
 import numpy as np
 import random
-np.random.seed(42)
-random.seed(42)
 import pandas as pd
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
@@ -39,7 +37,7 @@ clients_labels = clients["BeatsPerMinute"]
 clients_test = standard_test_set()
 
 num_pipeline = make_pipeline(
-    PolynomialFeatures(degree=2, interaction_only=True, include_bias=False),
+    PolynomialFeatures(degree=2, interaction_only=False, include_bias=False),
     SimpleImputer(strategy="median"),
     StandardScaler())
 
@@ -61,21 +59,23 @@ preprocessing = ColumnTransformer([
 full_pipeline = Pipeline([
     ("full_preprocessing", preprocessing),
     ("model", LGBMRegressor(
-        random_state=42,
+        random_state=0,
+        boosting_type="rf",
+        n_jobs=-1
         )
     )
 ])
 
 param_distributions = {
-    "model__learning_rate": uniform(0.0009, 0.005),
-    "model__n_estimators": randint(300, 2000),
-    "model__num_leaves": randint(15, 50),         
-    "model__min_child_samples": randint(5, 50),   
-    "model__reg_alpha": uniform(1.0, 6.0),         
-    "model__reg_lambda": uniform(0.0, 2.5),       
-    "model__max_bin": randint(54, 220),
-    "model__subsample": uniform(0.6, 0.4),         
-    "model__colsample_bytree": uniform(0.6, 0.4), 
+    "model__learning_rate": uniform(0.01, 0.15),
+    "model__n_estimators": randint(3000, 4000),
+    "model__num_leaves": randint(5, 55),         
+    "model__min_child_samples": randint(30, 95),   
+    "model__reg_alpha": uniform(3, 3.0),         
+    "model__reg_lambda": uniform(1.5, 3),       
+    "model__max_bin": randint(64, 400),
+    "model__subsample": uniform(0.9, 0.1),         
+    "model__colsample_bytree": uniform(0.8, 0.2), 
 }
 
 
@@ -84,16 +84,16 @@ cv = KFold(n_splits=5, shuffle=True, random_state=42)
 random_search = RandomizedSearchCV(
     estimator=full_pipeline,
     param_distributions=param_distributions,
-    n_iter=50,                 
+    n_iter=100,                 
     cv=cv,
     scoring="neg_root_mean_squared_error",
     verbose=2,
-    random_state=42,              
+    random_state=0,              
 )
 
 random_search.fit(clients_attr, clients_labels)
 print("best score (cv):", -random_search.best_score_)
 print("best params:", random_search.best_params_)
 
-best = pd.DataFrame(random_search.best_params_, columns= list(random_search.best_params_.keys()), index=range(9))
-best.to_csv("reports/gbm_best_params_1")
+best = pd.DataFrame(random_search.best_params_, columns= list(random_search.best_params_.keys()), index=range(1))
+best.to_csv("reports/gbm_best_params_4")

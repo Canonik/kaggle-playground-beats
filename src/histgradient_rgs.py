@@ -63,17 +63,17 @@ full_pipeline = Pipeline([
     ("model", HistGradientBoostingRegressor(
         random_state=1234,
         early_stopping=True,        
-        validation_fraction=0.1,
-        n_iter_no_change=125,))
+        validation_fraction=0.05,
+        n_iter_no_change=200,))
 ])
 
 param_distributions = {
-    "model__learning_rate": uniform(0.0005, 0.0050),
-    "model__max_iter": randint(250, 2000),
-    "model__max_leaf_nodes": randint(5, 40),
-    "model__min_samples_leaf": randint(1, 24),
-    "model__l2_regularization": uniform(10.0, 14.0),
-    "model__max_bins": randint(30, 250),
+    "model__learning_rate": uniform(0.0005, 0.010),
+    "model__max_iter": randint(250, 1500),
+    "model__max_leaf_nodes": randint(15, 40),
+    "model__min_samples_leaf": randint(15, 24),
+    "model__l2_regularization": uniform(0.5, 2.0),
+    "model__max_bins": randint(130, 250),
 }
 
 cv = KFold(n_splits=5, shuffle=True, random_state=1234)
@@ -81,7 +81,7 @@ cv = KFold(n_splits=5, shuffle=True, random_state=1234)
 random_search = RandomizedSearchCV(
     estimator=full_pipeline,
     param_distributions=param_distributions,
-    n_iter=600,                 
+    n_iter=100,                 
     cv=cv,
     scoring="neg_root_mean_squared_error",
     verbose=2,
@@ -93,7 +93,7 @@ print("best score (cv):", -random_search.best_score_)
 print("best params:", random_search.best_params_)
 
 best = pd.DataFrame(random_search.best_params_, columns= list(random_search.best_params_.keys()), index=list(random_search.best_params_))
-best.to_csv("reports/hist_best_params_3")
+best.to_csv("reports/hist_best_params_6")
 
 
 #best score (cv): 26.460037170278305

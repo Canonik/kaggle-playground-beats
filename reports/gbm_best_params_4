@@ -1,0 +1,2 @@
+,model__colsample_bytree,model__learning_rate,model__max_bin,model__min_child_samples,model__n_estimators,model__num_leaves,model__reg_alpha,model__reg_lambda,model__subsample
+0,0.9189062659865335,0.08098836288143421,142,64,3848,10,5.229737367048568,2.1740133603592655,0.9169025406129161
